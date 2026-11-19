@@ -1,0 +1,172 @@
+<!doctype html>
+<!--
+  A stand-in for a Gemini chat, for trying the extension's look and feel
+  without loading it into Firefox. Serve the repository root (for example
+  `python -m http.server`) and open /test/manual/mock-gemini.html.
+  It fakes the `browser.*` APIs with localStorage, pretends to be on
+  gemini.google.com, and streams in a new answer after 2 seconds.
+-->
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Mock Gemini</title>
+    <link rel="stylesheet" href="../../src/content.css" />
+    <style>
+      body {
+        margin: 0;
+        font-family: system-ui, sans-serif;
+        background: #131314;
+        color: #e3e3e3;
+      }
+      main {
+        padding: 24px 16px 200px;
+      }
+      /* Like real Gemini: wrappers are full width, the text itself is centred. */
+      .markdown,
+      .thoughts,
+      .footer {
+        max-width: 680px;
+        margin-left: auto;
+        margin-right: auto;
+      }
+      user-query {
+        margin-right: calc(50% - 360px) !important;
+      }
+      input-container {
+        position: fixed;
+        bottom: 24px;
+        left: calc(50% - 360px);
+        width: 720px;
+        height: 48px;
+        border-radius: 24px;
+        background: #1e1f20;
+        display: block;
+      }
+      .conversation-container {
+        margin-bottom: 32px;
+      }
+      user-query {
+        display: block;
+        margin-left: auto;
+        width: fit-content;
+        max-width: 70%;
+        background: #282a2c;
+        padding: 10px 16px;
+        border-radius: 18px;
+      }
+      model-response {
+        display: block;
+        margin-top: 12px;
+        line-height: 1.6;
+      }
+      .response-container {
+        display: flex;
+        gap: 12px;
+      }
+      .response-content {
+        flex: 1;
+        min-width: 0;
+      }
+      .avatar {
+        color: #8ab4f8;
+        font-size: 20px;
+      }
+      .thoughts,
+      .footer {
+        opacity: 0.6;
+        font-size: 13px;
+        margin: 6px 0;
+      }
+      :root {
+        --gem-sys-color--surface-container-high: #282a2c;
+        --gem-sys-color--surface-container-highest: #333537;
+      }
+      body.light {
+        background: #fff;
+        color: #1f1f1f;
+      }
+      body.light user-query {
+        background: #e9eef6;
+      }
+    </style>
+    <script>
+      // Minimal fake of the WebExtension APIs used by content.js.
+      window.browser = {
+        storage: {
+          local: {
+            get: async (k) => {
+              const v = localStorage.getItem(k);
+              return v ? { [k]: JSON.parse(v) } : {};
+            },
+            set: async (o) => {
+              for (const k in o) localStorage.setItem(k, JSON.stringify(o[k]));
+            },
+            remove: async (k) => localStorage.removeItem(k),
+          },
+        },
+        runtime: {
+          onMessage: {
+            addListener: (fn) => {
+              window.__sendMessage = fn;
+            },
+          },
+        },
+      };
+    </script>
+  </head>
+  <body>
+    <main id="chat"></main>
+    <input-container></input-container>
+    <script>
+      const para = (n) =>
+        Array.from(
+          { length: n },
+          (_, i) =>
+            `<p>Paragraph ${i + 1}. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>`,
+        ).join("");
+      const turns = [
+        ["Explain how binary search works.", "<h3>Binary search</h3>" + para(8)],
+        ["Why does it need a sorted array?", para(3)],
+        ["What's the time complexity?", para(2)],
+        ["Now explain hash tables.", "<h3>Hash tables</h3>" + para(8)],
+      ];
+      const addTurn = (q, a) => {
+        const c = document.createElement("div");
+        c.className = "conversation-container";
+        c.innerHTML = `<user-query><div class="query-text">${q}</div></user-query>
+      <model-response><div class="response-container">
+        <div class="avatar">✦</div>
+        <div class="response-content">
+          <div class="thoughts">Show thinking ▾</div>
+          <message-content><div class="markdown">${a}</div></message-content>
+          <div class="footer">👍 👎 ⧉ ⋯</div>
+        </div></div></model-response>`;
+        document.getElementById("chat").appendChild(c);
+        return c;
+      };
+      turns.forEach(([q, a]) => addTurn(q, a));
+      // A bar left behind by an older copy of the extension; content.js should remove it.
+      const stale = document.createElement("button");
+      stale.className = "af-bar";
+      stale.textContent = "STALE BAR";
+      document.querySelector("model-response").before(stale);
+      // Simulate a streamed answer arriving later.
+      setTimeout(() => {
+        const c = addTurn("And collisions?", "");
+        const md = c.querySelector(".markdown");
+        let i = 0;
+        const t = setInterval(() => {
+          md.insertAdjacentHTML("beforeend", para(1));
+          if (++i === 4) clearInterval(t);
+        }, 300);
+      }, 2000);
+    </script>
+    <script src="../../src/sites.js"></script>
+    <script>
+      // Treat this local page as Gemini.
+      AnswerFold.SITES.find((s) => s.id === "gemini").hosts.push(location.hostname);
+    </script>
+    <script src="../../src/content.js"></script>
+  </body>
+</html>

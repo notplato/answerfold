@@ -1,0 +1,32 @@
+{
+  "name": "answerfold",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Firefox extension that collapses and expands individual answers in AI chats.",
+  "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "start": "web-ext run --source-dir src --start-url https://gemini.google.com/app",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "lint": "npm run lint:js && npm run lint:format && npm run lint:ext",
+    "lint:js": "eslint .",
+    "lint:format": "prettier --check .",
+    "lint:ext": "web-ext lint --source-dir src",
+    "format": "prettier --write .",
+    "build": "web-ext build --source-dir src --artifacts-dir dist --overwrite-dest",
+    "check": "npm run lint && npm test && npm run build"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "eslint": "^10.15.0",
+    "globals": "^17.14.0",
+    "jsdom": "^31.0.1",
+    "prettier": "^3.10.1",
+    "vitest": "^5.1.1",
+    "web-ext": "^10.8.0"
+  }
+}

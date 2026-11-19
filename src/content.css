@@ -1,0 +1,165 @@
+/*
+ * AnswerFold — styles.
+ * Each site can override the --af-* variables below to match its own theme.
+ * The defaults are translucent, so they work in both light and dark mode.
+ */
+
+.af-bar,
+.af-fab {
+  --af-font: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --af-surface: rgba(128, 128, 128, 0.14);
+  --af-surface-hover: rgba(128, 128, 128, 0.22);
+  --af-surface-raised: var(--af-surface);
+  --af-outline: rgba(128, 128, 128, 0.3);
+  --af-text: currentColor;
+  --af-text-muted: currentColor;
+}
+
+/*
+ * Gemini: use its own font and theme colours. content.js sets data-af-site.
+ * Declared on our elements (not :root) so Gemini's variables, which it may
+ * define further down the tree, are in scope.
+ */
+html[data-af-site="gemini"] .af-bar,
+html[data-af-site="gemini"] .af-fab {
+  --af-font:
+    "Google Sans Flex", "Google Sans Text", "Google Sans", Roboto, "Helvetica Neue", Arial,
+    sans-serif;
+  --af-surface: var(--gem-sys-color--surface-container-high, rgba(128, 128, 128, 0.14));
+  --af-surface-hover: var(--gem-sys-color--surface-container-highest, rgba(128, 128, 128, 0.22));
+  --af-surface-raised: var(--gem-sys-color--surface-container, rgba(128, 128, 128, 0.14));
+  --af-outline: var(--gem-sys-color--outline-variant, rgba(128, 128, 128, 0.3));
+  --af-text: var(--gem-sys-color--on-surface, currentColor);
+  --af-text-muted: var(--gem-sys-color--on-surface-variant, currentColor);
+}
+
+/* Folded: hide everything in the answer except the bar and the elements leading to it. */
+.af-collapsed > :not(.af-path):not(.af-bar),
+.af-collapsed .af-path > :not(.af-path):not(.af-bar) {
+  display: none !important;
+}
+
+.af-bar {
+  all: unset;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  width: fit-content;
+  /* --af-offset / --af-width are set by content.js to line up with the answer text. */
+  max-width: var(--af-width, 100%);
+  margin: 0 0 8px calc(var(--af-offset, 0px) - 12px);
+  padding: 6px 14px 6px 10px;
+  border-radius: 999px;
+  font-family: var(--af-font);
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 20px;
+  letter-spacing: 0.1px;
+  color: var(--af-text-muted);
+  opacity: 0.7;
+  cursor: pointer;
+  user-select: none;
+  transition:
+    opacity 0.15s,
+    background-color 0.15s;
+}
+
+.af-bar:hover,
+.af-bar:focus-visible {
+  opacity: 1;
+  background: var(--af-surface);
+}
+
+.af-bar:focus-visible {
+  outline: 2px solid rgba(138, 180, 248, 0.8);
+  outline-offset: 2px;
+}
+
+.af-arrow {
+  display: inline-flex;
+  flex: none;
+  transition: transform 0.2s;
+}
+
+.af-label {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  min-width: 0;
+}
+
+/* Folded: a rounded card like a question bubble, showing the answer's opening line. */
+.af-bar.af-is-collapsed {
+  width: var(--af-width, 100%);
+  margin: 4px 0 12px var(--af-offset, 0px);
+  padding: 12px 20px 12px 14px;
+  gap: 10px;
+  border-radius: 24px;
+  font-size: 15px;
+  font-weight: 400;
+  line-height: 24px;
+  color: var(--af-text);
+  opacity: 1;
+  background: var(--af-surface);
+}
+
+.af-bar.af-is-collapsed:hover {
+  background: var(--af-surface-hover);
+}
+
+.af-bar.af-is-collapsed .af-arrow {
+  transform: rotate(-90deg);
+  color: var(--af-text-muted);
+}
+
+/* Floating collapse/expand-all button: a round icon button like a chat site's own
+   "scroll to bottom" arrow. */
+.af-fab {
+  all: unset;
+  position: fixed;
+  right: 24px;
+  bottom: 140px;
+  z-index: 2147483000;
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  color: var(--af-text-muted);
+  background: var(--af-surface-raised);
+  border: 1px solid var(--af-outline);
+  cursor: pointer;
+  user-select: none;
+  transition:
+    background-color 0.15s,
+    color 0.15s;
+}
+
+.af-fab svg {
+  width: 20px;
+  height: 20px;
+}
+
+.af-fab[hidden] {
+  display: none;
+}
+
+.af-fab:hover {
+  color: var(--af-text);
+  background: var(--af-surface-hover);
+}
+
+.af-fab:focus-visible {
+  outline: 2px solid rgba(138, 180, 248, 0.9);
+  outline-offset: 2px;
+}
+
+@media (max-width: 600px) {
+  .af-fab {
+    right: 12px;
+    bottom: 160px;
+  }
+}

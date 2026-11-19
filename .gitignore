@@ -1,0 +1,12 @@
+node_modules/
+dist/
+coverage/
+web-ext-artifacts/
+*.zip
+*.xpi
+.DS_Store
+Thumbs.db
+# Local editor / assistant settings
+.claude/
+.vscode/
+.idea/

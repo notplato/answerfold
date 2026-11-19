@@ -1,0 +1,41 @@
+{
+  "manifest_version": 3,
+  "name": "AnswerFold",
+  "version": "0.1.0",
+  "description": "Collapse and expand individual answers in AI chats, so you can jump between the ones that matter. Works on Gemini.",
+  "icons": {
+    "48": "icons/icon-48.png",
+    "96": "icons/icon-96.png",
+    "128": "icons/icon-128.png"
+  },
+  "permissions": ["storage"],
+  "background": {
+    "scripts": ["background.js"]
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://gemini.google.com/*"],
+      "js": ["sites.js", "content.js"],
+      "css": ["content.css"],
+      "run_at": "document_idle"
+    }
+  ],
+  "commands": {
+    "toggle-all": {
+      "suggested_key": { "default": "Alt+Shift+C" },
+      "description": "Collapse or expand all answers"
+    }
+  },
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "{7c8e20f8-3af3-4385-ae40-b520e169ca0d}",
+      "strict_min_version": "140.0",
+      "data_collection_permissions": {
+        "required": ["none"]
+      }
+    },
+    "gecko_android": {
+      "strict_min_version": "142.0"
+    }
+  }
+}

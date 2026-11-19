@@ -1,0 +1,43 @@
+name: Bug report
+description: Something doesn't work, or the fold bars stopped appearing.
+labels: [bug]
+body:
+  - type: dropdown
+    id: site
+    attributes:
+      label: Site
+      options: [Gemini, Other]
+    validations:
+      required: true
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened?
+      description: What did you expect, and what happened instead? Screenshots help a lot.
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. Open a Gemini chat with several answers
+        2. Click the fold bar on the first answer
+        3. ...
+  - type: input
+    id: versions
+    attributes:
+      label: Versions
+      description: AnswerFold version (about:addons) and Firefox version (Help → About Firefox).
+      placeholder: AnswerFold 0.1.0, Firefox 146
+    validations:
+      required: true
+  - type: textarea
+    id: console
+    attributes:
+      label: Errors in the console (optional)
+      description: Press F12 on the chat page, open the Console tab, and paste any red errors.
+      render: text
+  - type: markdown
+    attributes:
+      value: "**Please don't paste your chat contents.** Screenshots of the layout are enough."

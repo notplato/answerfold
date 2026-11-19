@@ -1,0 +1,22 @@
+name: Support a new site
+description: Ask for AnswerFold to work on another AI chat site.
+labels: [new-site]
+body:
+  - type: input
+    id: site
+    attributes:
+      label: Site
+      placeholder: e.g. https://claude.ai
+    validations:
+      required: true
+  - type: textarea
+    id: notes
+    attributes:
+      label: Anything we should know?
+      description: Login needed, unusual layout, features of that site that matter...
+  - type: checkboxes
+    id: help
+    attributes:
+      label: Can you help?
+      options:
+        - label: I'd like to try adding it myself (see CONTRIBUTING.md → Adding a new site)
